@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>KKY/NSES - Příklady</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="js/jQuery/01-jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/jQuery/02-jquery-ui.min.js"></script>
+    <script src="js/neural_network_1_layer.js" type="text/javascript"> </script>
+</head>
+<body>
+    <div id="navigation">
+        <div id="navigation-title">
+            <h1>Katedra Kybernetiky - Neuronové sítě a evoluční strategie</h1>
+        </div>
+        <div>
+            <ul id="navigation-menu">
+                <li class="navigation-menu-li">
+                    <a href="./index.html">Domů</a>
+                </li>
+                <li class="navigation-menu-li">
+                    <a href="./priklady.html" class="active">Příklady</a>
+                </li>
+                <li class="navigation-menu-li">
+                    <a href="./navod.html">Návod</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <div>
+            <h2>1. příklad</h2>
+            <p>
+                Jsou dány 4 množiny ležící na přímce. Obecně platí, že počet výstupů sítě může být jakékoli celé číslo z intervalu [log2(R), R], kde R je počet tříd.
+                Tím pádem lze použít 2 až 4 neurony. Z příkladu ale plyne, že můžem použít buďto 3, nebo 4 neurony, protože 2 přímky mezi tyto 4 množiny nevložíme.
+            </p>
+            <select id="list-example1">
+                <option>2 neurony</option>
+                <option>3 neurony</option>
+                <option>4 neurony</option>
+            </select>
+            <button onclick="startExample1()">Spustit síť</button><br />
+            <svg id="graph-example1" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>    
+            <svg id="error-example1" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>
+            <table>
+                <tr>
+                    <td>
+                        Jít na krok:
+                    </td>
+                    <td>
+                        <input id="step-example1" type="number" value="0" min="0" max="0" onchange="step_example1()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Jít na cyklus:
+                    </td>
+                    <td>
+                        <input id="cycle-example1" type="number" value="0" min="0" max="0" onchange="cycle_example1()">
+                    </td>
+                </tr>
+            </table>
+            <p>Jak tedy volit výstupy? V případě 2 neuronů nemůžem nikdy dosáhnout, v tomhle případě, správného výsledku.</p>
+            <p>
+                Při volení 3 neuronů musíme perfektně znát rozložení tříd, abychom mohli určit výstupy.
+                V uvedeném příkladě 1 víme, že 1. skupina je nalevo, 2. skupina je napravo od 1.,...atd., tím pádem můžeme jednoznačně určit souřadnice,
+                kterých je <b><i>2<sup>(počet neuronů)</sup></i></b> z celkových <b><i>2<sup>(počet neuronů)</sup> * (počet tříd)!</i></b>.
+            </p>
+            <p>
+                U 4 neuronů platí to samé, co u 3 neuronů. Jediný rozdíl jest, že 1 neuron je zbytečný, neboť 2 neurony budou procházet mezi 2 třídami,
+                nebo 1 neuron bude "plavat" kolem všech tříd (viz příklad 1).
+            </p>
+            
+            <h2>2. příklad</h2>
+            <p>
+                Jsou dány 4 množiny, kde 3 z nich leží na přímce. Opět lze proto použít 2 až 4 neurony, nyní ale můžem najít vždy řešení.
+            </p>
+            <select id="list-example2">
+                <option>2 neurony</option>
+                <option>3 neurony</option>
+                <option>4 neurony</option>
+            </select>
+            <button onclick="startExample2()">Spustit síť</button><br />
+            <svg id="graph-example2" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>    
+            <svg id="error-example2" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>
+            <table>
+                <tr>
+                    <td>
+                        Jít na krok:
+                    </td>
+                    <td>
+                        <input id="step-example2" type="number" value="0" min="0" max="0" onchange="step_example2()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Jít na cyklus:
+                    </td>
+                    <td>
+                        <input id="cycle-example2" type="number" value="0" min="0" max="0" onchange="cycle_example2()">
+                    </td>
+                </tr>
+            </table>
+            <p>
+                Opět platí, že musíme znát rozložení tříd. Pokud nevíme, kde se jednotlivé třídy nachází, musíme použít metodu pokus-omyl
+                (neboli pokus-naděje), kde v případě nenatrénování sítě (dle zadaných podmínek) se vyloučí výstupní vektory.
+            </p> 
+            <p>
+                Protože se všechny třídy již nenachází na jedné přímce, je možnost, se správném určením výstupů, natrénovat síť s použitím 2 neuronů.
+            </p> 
+            <p>
+                Při použití 3 neuronů se může stát, že 1 neuron bude "plavat", neboli bude zbytečný. Tato situace nastane, když se 2 neurony budou protínat
+                mezi horní třídou a spodními třídami, jako v případě použití 2 neuronů v tomhle příkladě.
+                Použitím 4 neuronů budou vždy plavat 1 nebo 2 neurony.   
+            </p> 
+            
+            <h2>3. příklad</h2>
+            <p>
+                Jsou dány 4 množiny, které neleží na přímce.
+            </p>
+            <select id="list-example3">
+                <option>2 neurony</option>
+                <option>3 neurony</option>
+                <option>4 neurony</option>
+            </select>
+            <button onclick="startExample3()">Spustit síť</button><br />
+            <svg id="graph-example3" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>    
+            <svg id="error-example3" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>
+            <table>
+                <tr>
+                    <td>
+                        Jít na krok:
+                    </td>
+                    <td>
+                        <input id="step-example3" type="number" value="0" min="0" max="0" onchange="step_example3()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Jít na cyklus:
+                    </td>
+                    <td>
+                        <input id="cycle-example3" type="number" value="0" min="0" max="0" onchange="cycle_example3()">
+                    </td>
+                </tr>
+            </table>
+            
+            <h2>4. příklad</h2>
+            <p>
+                Urychlení trénování Neuronové sítě. Máme zadány 4 třídy, kde v každém případě jsou posunuty po x-ové nebo y-ové ose.
+            </p>
+            <select id="list-example4">
+                <option>1.</option>
+                <option>2.</option>
+            </select>
+            <button onclick="startExample4()">Spustit síť</button><br />
+            <svg id="graph-example4" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>    
+            <svg id="error-example4" width="500" height="300" style="border:1px solid black;">
+                Váš prohlížeč nepodporuje element svg.
+            </svg>
+            <table>
+                <tr>
+                    <td>
+                        Jít na krok:
+                    </td>
+                    <td>
+                        <input id="step-example4" type="number" value="0" min="0" max="0" onchange="step_example4()">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Jít na cyklus:
+                    </td>
+                    <td>
+                        <input id="cycle-example4" type="number" value="0" min="0" max="0" onchange="cycle_example4()">
+                    </td>
+                </tr>
+            </table>
+            
+            <p>
+                Abychom urychlili síť, musíme vypočítat střední hodnotu všech vstupů a poté ji od každého vstupu odečíst.
+                Tím dojde k posunutí osy do středu dění, tudíž to má za následek urychlení trénování sítě.
+            </p>
+            <p>
+                V 1. případě je síť v původním stavu, neboli vstupní souřadnice jsou nezměněné. V 2. přímadě jsou vstupní souřadnice
+                upravené tak, aby jejich střední hodnota ležela v bodě [0, 0]. Nastavení neuronové sítě jsou v obou případech totožné.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

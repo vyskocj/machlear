@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>KKY/NSES - Dvouvrstvá síť</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="js/jQuery/01-jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/jQuery/02-jquery-ui.min.js"></script>
+    <script src="js/neural_network_2_layer.js" type="text/javascript"> </script>
+</head>
+<body>
+    <div id="navigation">
+        <div id="navigation-title">
+            <h1>Katedra Kybernetiky - Neuronové sítě a evoluční strategie</h1>
+        </div>
+        <div>
+            <ul id="navigation-menu">
+                <li class="navigation-menu-li">
+                    <a href="./index.html" class="active">Domů</a>
+                </li>
+                <li class="navigation-menu-li">
+                    <a href="./priklady.html">Příklady</a>
+                </li>
+                <li class="navigation-menu-li">
+                    <a href="./navod.html">Návod</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <h2>Dvouvrstvá neuronová síť s učením učitelem</h2>
+        <table>
+            <tr>
+                <td class="content-table" width="500px">
+                    <table>
+                        <tr>
+                            <td>Počet trénovacích dvojic:</td>
+                            <td><input id="numberOfPairs" type="number" min="1" max="9999" onchange="neuralNetworkSettings()" value="1"></td>
+                            <td>
+                                <div class="fileUpload btn btn-pairs">
+                                    <span>Nahrát</span>
+                                    <input type="file" class="upload" onchange="loadPairs(event)" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maximální počet trénovacích cyklů:</td>
+                            <td><input id="numberOfTrainingCycles" onchange="neuralNetworkSettings()" type="number" min="1" max="9999" value="100"></td>
+                        </tr>
+                        <tr>
+                            <td>Konstanta učení:</td>
+                            <td><input id="constantOfLearning" type="number" min="0" max="99" onchange="neuralNetworkSettings()" value="0.75" step="0.1"></td>
+                        </tr>
+                        <tr>
+                            <td>Počet neuronů ve skryté vrstvě:</td>
+                            <td><input id="numberOfNeuronsInTheHiddenLayer" type="number" min="1" max="99" onchange="neuralNetworkSettings()" value="23"></td>
+                        </tr>
+                        <tr>
+                            <td>Strimost aktivační funkce 1. vrstvy:</td>
+                            <td><input id="lambda1" type="number" min="0" max="999" onchange="neuralNetworkSettings()" value="0.7" step="0.1"></td>
+                        </tr>
+                        <tr>
+                            <td>Strimost aktivační funkce 2. vrstvy:</td>
+                            <td><input id="lambda2" type="number" min="0" max="999" onchange="neuralNetworkSettings()" value="0.085" step="0.1"></td>
+                        </tr>
+                        <tr>
+                            <td>Maximální chyba:</td>
+                            <td><input id="maxError" type="number" min="0" max="99" onchange="neuralNetworkSettings()" value="0" step="0.1"></td>
+                        </tr>
+                    </table>
+                    <div id="post-info">
+                        <h3>Informace</h3>
+                        Natrénování s chybou: <span id="E_end"></span><br />
+                        Střední hodnota: <span id="mu"></span><br /><br />
+                        <button class="button-collapse" onclick="collapseOutput()">Výstup</button>
+                        <table id="outputs" style="display:none">
+                            <tr>
+                                <td>
+                                    W0:
+                                </td>
+                                <td>
+                                    <table id="W0">
+                                    </table>
+                                </td>
+                                <td>
+                                    b0:
+                                </td>
+                                <td>
+                                    <table id="b0"></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    W:
+                                </td>
+                                <td>
+                                    <table id="W"></table>
+                                </td>
+                                <td>
+                                    b:
+                                </td>
+                                <td>
+                                    <table id="b"></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    V0:
+                                </td>
+                                <td>
+                                    <table id="V0"></table>
+                                </td>
+                                <td>
+                                    d0:
+                                </td>
+                                <td>
+                                    <table id="d0"></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    V:
+                                </td>
+                                <td>
+                                    <table id="V"></table>
+                                </td>
+                                <td>
+                                    d:
+                                </td>
+                                <td>
+                                    <table id="d"></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+
+                <td class="content-table">   
+                    <div id="graph">
+                        Urychlení učení: <input type="checkbox" id="faster" style="width:15px" />
+                        <button onclick="start()">Spustit síť</button>
+                        <button onclick="drawError()">Vykreslit chybu</button><br />
+                        <svg id="graph-error" width="500" height="300" style="border:1px solid black;">
+                            Váš prohlížeč nepodporuje element svg.
+                        </svg>   
+                        <br />
+                    </div>                    
+                    Klasifikace vstupu:<br />
+                    x<sub>1</sub>: <input id="x1-test" type="number" value="0" step="0.1"> 
+                    x<sub>2</sub>: <input id="x2-test" type="number" value="0" step="0.1"> 
+                    x<sub>3</sub>: <input id="x3-test" type="number" value="0" step="0.1"><br />
+                    y: <span id="result-test"></span><br />
+                    <button onclick="test()">Otestovat</button>
+                </td>
+            </tr>
+        </table>
+        <button class="button-collapse" onclick="collapsePairs()">Trénovací dvojice</button>
+        <div id="pairs">
+            <table id="pairs-table">
+                <tr>
+                    <td colspan="3">
+                        Vektor vstupů <b>x</b>
+                    </td>
+                    <td colspan="7">
+                        Vektor výstupů <b>y</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="number" id="x0,0" step="0.1">
+                    </td>
+                    <td>
+                        <input type="number" id="x0,1" step="0.1">
+                    </td>
+                    <td>
+                        <input type="number" id="x0,2" step="0.1">
+                    </td>
+
+                    <td>
+                        <select id="y0,0">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,1">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,2">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,3">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,4">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,5">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="y0,6">
+                            <option>-1</option>
+                            <option>1</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
