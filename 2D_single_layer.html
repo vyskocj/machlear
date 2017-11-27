@@ -120,7 +120,7 @@
                         </table>
                     </div>
                     <div id="graph">
-                        <svg id="graph-network" width="500" height="300" style="border:1px solid black;">
+                        <svg id="graph-network" onclick="test_by_click(event)" width="500" height="300" style="border:1px solid black;">
                             Váš prohlížeč nepodporuje element svg.
                         </svg>
                         <svg id="graph-error" width="500" height="300" style="border:1px solid black;">
@@ -141,6 +141,14 @@
                                 </td>
                                 <td>
                                     <input id="garph-numberOfCycle" type="number" value="0" min="0" max="0" onchange="getOnTheCycle()">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="garph-animate" type="number" value="700" min="0" max="9999" style="width:100px">
+                                </td>
+                                <td>
+                                    <button onclick="anim()">Animovat [ms]</button>
                                 </td>
                             </tr>
                         </table>

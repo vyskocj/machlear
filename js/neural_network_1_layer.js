@@ -213,12 +213,48 @@ $(document).ready(function () {
             div.style.display = "none";
     }
 
+    //kliknutí souøadnic
+    test_by_click = function (event) {
+        var graph = document.getElementById("graph-network");
+        var graph_coords = graph.getBoundingClientRect();
+        var x = event.clientX - graph_coords.left;
+        var y = event.clientY - graph_coords.top;
+        //zakreslení souøadnic
+        document.getElementById("test_x").setAttribute("x1", 30);
+        document.getElementById("test_x").setAttribute("y1", y);
+        document.getElementById("test_x").setAttribute("x2", graph.getAttribute("width") - 5);
+        document.getElementById("test_x").setAttribute("y2", y);
+
+        document.getElementById("test_y").setAttribute("x1", x);
+        document.getElementById("test_y").setAttribute("y1", 5);
+        document.getElementById("test_y").setAttribute("x2", x);
+        document.getElementById("test_y").setAttribute("y2", graph.getAttribute("height") - 30);
+
+        //pøepoèet souøadnic
+        var pointX = (x_max - x_min) / (graph.getAttribute("width") - 40);
+        var pointY = (y_max - y_min) / (graph.getAttribute("height") - 40);
+        x = (pointX * x + x_min - pointX * 5 - 1);
+        y = (y_max - pointY * y + pointY * 5);
+        document.getElementById("x1-test").value = x;
+        document.getElementById("x2-test").value = y;
+
+        //výpoèet
+        document.getElementById("result-test").innerHTML = "";
+        var y_i = new Array(W.length);
+        for (i = 0; i < W.length; i++) {
+            var y_ij = W[i][0] * x + W[i][1] * y;
+            y_i[i] = (Number(y_ij + b[i]) >= 0 ? 1 : -1);
+            document.getElementById("result-test").innerHTML += '<span style="color:white; background:' + colors[colors.length - i - 1] + '">' + y_i[i] + '</span>';
+        }
+    }
+
     //testování sítì
     test = function () {
         var x = new Array(2);
         x[0] = Number(document.getElementById("x1-test").value - mu_x);
         x[1] = Number(document.getElementById("x2-test").value - mu_y);
         drawTestInput(x[0], x[1], document.getElementById("graph-network"));
+        document.getElementById("result-test").innerHTML = "";
 
         var y_i = new Array(W.length);
         for (i = 0; i < W.length; i++) {
@@ -227,8 +263,8 @@ $(document).ready(function () {
                 y_ij += W[i][j] * x[j];
             }
             y_i[i] = (Number(y_ij + b[i]) >= 0 ? 1 : -1);
+            document.getElementById("result-test").innerHTML += '<span style="color:white; background:' + colors[colors.length - i - 1] + '">' + y_i[i] + '</span>';
         }
-        document.getElementById("result-test").innerHTML = y_i;
     }
 
     /**
@@ -527,6 +563,34 @@ $(document).ready(function () {
         nbr_step.value = krok;
         drawGraphError(graph_error, cyklus, Ec_all, E_max);
         drawGraphLines2D(graph_network, lines[krok]);
+    }
+
+    //animace
+    anim = function () {
+        var nbr_ms = document.getElementById("garph-animate");
+        if (Number(nbr_ms.value) > Number(nbr_ms.max))
+            nbr_ms.value = nbr_ms.max;
+        else if (nbr_ms.value < nbr_ms.min)
+            nbr_ms.value = nbr_ms.min;
+
+        var nbr_cycle = document.getElementById("garph-numberOfCycle");
+        var nbr_step = document.getElementById("garph-numberOfStep");
+        var graph_error = document.getElementById("graph-error");
+        var graph_network = document.getElementById("graph-network");
+        var i = setInterval(frame, nbr_ms.value);
+        var qi = 0;
+        function frame() {
+            if (qi == nbr_cycle.max) {
+                clearInterval(i);
+            } else {
+                qi++;
+                krok = nbr_step.max / nbr_cycle.max * (qi - 1) + 1;
+                nbr_step.value = krok;
+                nbr_cycle.value = qi;
+                drawGraphError(graph_error, qi, Ec_all, E_max);
+                drawGraphLines2D(graph_network, lines[krok]);
+            }
+        }
     }
 
     //hlídání mezí jednotlivých políèek pro zadávání hodnot
