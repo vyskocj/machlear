@@ -235,8 +235,8 @@ $(document).ready(function () {
         var pointY = (y_max - y_min) / (graph.getAttribute("height") - 40);
         x = (pointX * x + x_min - pointX * 5 - 1);
         y = (y_max - pointY * y + pointY * 5);
-        document.getElementById("x1-test").value = x;
-        document.getElementById("x2-test").value = y;
+        document.getElementById("x1-test").value = x + mu_x;
+        document.getElementById("x2-test").value = y + mu_y;
 
         //výpoèet
         document.getElementById("result-test").innerHTML = "";
