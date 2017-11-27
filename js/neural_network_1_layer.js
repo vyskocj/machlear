@@ -20,7 +20,7 @@ $(document).ready(function () {
     var E = [];
     var E_max = 0;
     var Ec_all = [];
-    var colors = ["grey", "red", "DarkOrange", "blue", "green", "pink", "black", "brown", "goldenrod", "cyan", "lime", "purple"];
+    var colors = ["#835900", "#537A00", "#68003D", "#001658", "#FFB921", "#FF21A3", "#3A6BFF", "#785A1A", "#2CB088", "#FF823F", "#7E35B3"];
     var lines = [];
     var krok = 0;
     var cyklus = 0;
@@ -229,11 +229,11 @@ $(document).ready(function () {
         document.getElementById("test_y").setAttribute("y1", 5);
         document.getElementById("test_y").setAttribute("x2", x);
         document.getElementById("test_y").setAttribute("y2", graph.getAttribute("height") - 30);
-
+            
         //pøepoèet souøadnic
         var pointX = (x_max - x_min) / (graph.getAttribute("width") - 40);
         var pointY = (y_max - y_min) / (graph.getAttribute("height") - 40);
-        x = (pointX * x + x_min - pointX * 5 - 1);
+        x = (pointX * x + x_min - pointX * 35);
         y = (y_max - pointY * y + pointY * 5);
         document.getElementById("x1-test").value = x + mu_x;
         document.getElementById("x2-test").value = y + mu_y;
@@ -566,31 +566,41 @@ $(document).ready(function () {
     }
 
     //animace
+    var qi = 0;
+    var an = false;
     anim = function () {
-        var nbr_ms = document.getElementById("garph-animate");
-        if (Number(nbr_ms.value) > Number(nbr_ms.max))
-            nbr_ms.value = nbr_ms.max;
-        else if (nbr_ms.value < nbr_ms.min)
-            nbr_ms.value = nbr_ms.min;
-
         var nbr_cycle = document.getElementById("garph-numberOfCycle");
-        var nbr_step = document.getElementById("garph-numberOfStep");
-        var graph_error = document.getElementById("graph-error");
-        var graph_network = document.getElementById("graph-network");
-        var i = setInterval(frame, nbr_ms.value);
-        var qi = 0;
-        function frame() {
-            if (qi == nbr_cycle.max) {
-                clearInterval(i);
-            } else {
-                qi++;
-                krok = nbr_step.max / nbr_cycle.max * (qi - 1) + 1;
-                nbr_step.value = krok;
-                nbr_cycle.value = qi;
-                drawGraphError(graph_error, qi, Ec_all, E_max);
-                drawGraphLines2D(graph_network, lines[krok]);
+        if (an == false) {
+            an = true;
+            document.getElementById("anim").innerHTML = "Stop";
+
+            var nbr_ms = document.getElementById("garph-animate");
+            if (Number(nbr_ms.value) > Number(nbr_ms.max))
+                nbr_ms.value = nbr_ms.max;
+            else if (nbr_ms.value < nbr_ms.min)
+                nbr_ms.value = nbr_ms.min;
+
+            var nbr_step = document.getElementById("garph-numberOfStep");
+            var graph_error = document.getElementById("graph-error");
+            var graph_network = document.getElementById("graph-network");
+            var i = setInterval(frame, nbr_ms.value);
+            qi = 0;
+            function frame() {
+                if (qi == nbr_cycle.max) {
+                    clearInterval(i);
+                    document.getElementById("anim").innerHTML = "Animovat [ms]";
+                    an = false;
+                } else {
+                    qi++;
+                    krok = nbr_step.max / nbr_cycle.max * (qi - 1) + 1;
+                    nbr_step.value = krok;
+                    nbr_cycle.value = qi;
+                    drawGraphError(graph_error, qi, Ec_all, E_max);
+                    drawGraphLines2D(graph_network, lines[krok]);
+                }
             }
-        }
+        } else
+            qi = nbr_cycle.max;
     }
 
     //hlídání mezí jednotlivých políèek pro zadávání hodnot
