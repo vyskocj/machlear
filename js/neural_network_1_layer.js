@@ -194,7 +194,7 @@ $(document).ready(function () {
             cel.innerHTML = "u" + i + " = " + valuesOfClasses[i - 1];
             for (j = 1; j <= nbr_neurons; j++) {
                 cel = row.insertCell(j);
-                cel.innerHTML = '<select id="uy' + String(i) + ',' + String(j) + '"><option>-1</option><option>1</option></select>';
+                cel.innerHTML = '<select style="color:white;background:' + colors[colors.length - j] + '" id="uy' + String(i) + ',' + String(j) + '"><option>-1</option><option>1</option></select>';
             }
         }
     }
